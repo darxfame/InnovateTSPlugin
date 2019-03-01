@@ -33,7 +33,7 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
     JButton btnUpdate = new JButton("Update Parameter");
 
     public ParameterSample(){
-        setBorder(BorderFactory.createTitledBorder("Scalar pub sub Example"));
+        setBorder(BorderFactory.createTitledBorder("Select innovate PCVariable"));
         setLayout(new BorderLayout(5,5));
 		
         add(BorderLayout.WEST, choiceParameter);

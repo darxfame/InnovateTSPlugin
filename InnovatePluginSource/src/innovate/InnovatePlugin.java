@@ -67,7 +67,7 @@ public class InnovatePlugin extends JPanel implements ApplicationPlugin{
     }
 
     public String getDisplayName() {
-        return "Innovate WBO";
+        return "Innovate WBO-COM(connect)";
     }
 
     public String getDescription() {
