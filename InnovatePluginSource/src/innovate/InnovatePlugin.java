@@ -14,6 +14,10 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import jssc.SerialPort;
+import jssc.SerialPortEvent;
+import jssc.SerialPortEventListener;
+import jssc.SerialPortException;
 
 public class InnovatePlugin extends JPanel implements ApplicationPlugin{
 
@@ -51,7 +55,6 @@ public class InnovatePlugin extends JPanel implements ApplicationPlugin{
         // pSouth.add(evalSample);
         paramSample = new ParameterSample();
         pSouth.add(paramSample);
-
         add(BorderLayout.SOUTH, pSouth);
 		
 
@@ -73,7 +76,7 @@ public class InnovatePlugin extends JPanel implements ApplicationPlugin{
     public String getDescription() {
         // return "A example TunerStudio Plugin implementation to demonstrate "
                 // + "the use of the TunerStudio Plugin API's";
-				return "";
+				return "wbo";
     }
 
 
@@ -97,17 +100,8 @@ public class InnovatePlugin extends JPanel implements ApplicationPlugin{
 						ca.getOutputChannelServer().subscribe(ecuControllerName, oc.getName(), label);
 						pReadouts.add(label);
 						}
-						
-						
 					}
 					
-					// for (int i = 0; i < outputChannelNames.length && i < 150; i++) {
-						// OutputChannel oc = ca.getOutputChannelServer().getOutputChannel(ecuControllerName, outputChannelNames[i]);
-						// OutputChannelLabel label = new OutputChannelLabel(oc);
-						// ca.getOutputChannelServer().subscribe(ecuControllerName, oc.getName(), label);
-						// pReadouts.add(label);
-					// }
-
             // initialize the UiDisplay
             // uiDisplay.initialize(controllerAccess);
 
@@ -143,16 +137,22 @@ public class InnovatePlugin extends JPanel implements ApplicationPlugin{
         // closed. If this is used again a initialize will be called.
         // Make sure the widgets are cleaned up!!!!
         // uiDisplay.clearWidgetPanel();
+        try{
+        ParameterSample.serialPort.closePort();
+        } catch (SerialPortException e) {
+                    e.printStackTrace();
+                }
+        
     }
     /** This main is likely not used, but TunerStudio will check the manifest
      * for the an ApplicationPlugin: assignment, if one is not found it will check
      * for a main class and expect that to be an implementation of
      * <code>ApplicationPlugin</code>. 
      *
-     * @param args the command line arguments
+     * 
      */
     public static void main(String[] args) {
-
+        
     }
 
     /** Here is is simply always enabled, and a more complex

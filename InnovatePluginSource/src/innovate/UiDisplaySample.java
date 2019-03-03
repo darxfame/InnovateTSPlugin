@@ -19,10 +19,6 @@ import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-/**
- *
- * @author Philip Tobin
- */
 public class UiDisplaySample extends JPanel{
     ControllerAccess controllerAccess = null;
     JPanel pWidget = new JPanel();
