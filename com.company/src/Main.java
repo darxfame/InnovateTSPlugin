@@ -3,20 +3,22 @@ import jssc.SerialPortList;
 import jssc.SerialPortEvent;
 import jssc.SerialPortEventListener;
 import jssc.SerialPortException;
+import java.util.LinkedList;
 
 public class Main {
     public static SerialPort serialPort = null;
     static PortReader read;
 
+
     public static class PortReader {
         private final int[] SLEEP_DURATIONS = {1,20,50,100};
+        LinkedList<Byte> byteList = new LinkedList();
 
         public String conv(byte[] in) {
 
             short afr = 0;
             short  lambda = 0;
-            float ratio = 0;
-            if(in.length == 6){      //ВНИМАНИЕ НУЖНО НАПИСАТЬ НОВЫЙ ВАРИАНТ РАЗБОРА ВХОДЯЩИХ ДАННЫХ
+            float ratio = 0;    //ВНИМАНИЕ НУЖНО НАПИСАТЬ НОВЫЙ ВАРИАНТ РАЗБОРА ВХОДЯЩИХ ДАННЫХ
             if ((in[0]==(byte)0xb2) && (in[1]==(byte)0x82)){  //определяем заголовок
                 if (((in[2] & 254)==66)) //определяем выполнение условия
                 {afr=in[3];
@@ -32,7 +34,7 @@ public class Main {
             builder.append(String.format("%02x", in[1]));
             return builder.toString();*/
                 return "";
-                        }}
+                        }
             return Float.toString(ratio);
         }
 
@@ -47,12 +49,19 @@ public class Main {
                         while (serialPort.isOpened()) {
                             // status.setText("Status " + serialPort.isOpened());
                             byte[] data = progressiveSleepRead(serialPort);
-
                             if (data != null){
+                                for(byte k : data)
+                                    byteList.add(k);
+                                while(byteList.size()>=6){
+                                   byte[] packet = new byte[6];
+                                   for(int k=0; k<6; k++)
+                                       packet[k] = byteList.pollFirst();
+                                   System.out.println("data " + conv(packet));
+                                }
                                 //listener.onDataArrived(data);
                                 //choiceCOM.setText(bytesToHex(data));
                                 //choiceCOM.setText(conv(data));
-                                System.out.println("data " + conv(data));
+                                //System.out.println("data " + conv(data));
                             }else{
                                 l++;
                                 // status.setText("Empty Data" +l);

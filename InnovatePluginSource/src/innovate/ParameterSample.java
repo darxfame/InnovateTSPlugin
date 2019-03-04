@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
@@ -32,9 +33,10 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
     ControllerParameterServer parameterServer = null;
     String mainConfigName = null;
     String currentParameterName = NO_PARAMETER;
-    public static SerialPort serialPort = null;
     PortReader read;
     String comport = "";
+    public  SerialPort serialPort = null;
+    public String paramName;
 
     
     JTextField txtValue = new JTextField("", 10);
@@ -47,7 +49,11 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
     JButton btnUpdate = new JButton("Update Parameter");
     
    public class PortReader {
-    private final int[] SLEEP_DURATIONS = {40};
+    private final int[] SLEEP_DURATIONS = {1,20,50,100};
+            LinkedList<Byte> byteList = new LinkedList();
+            
+
+                public Thread t;
     
         public String conv(byte[] in) {
 
@@ -75,21 +81,36 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
     
         public PortReader() {
             //status.setText("Connect ");
-            new Thread(new Runnable() {
+           t = new Thread(new Runnable() {
             @Override
             public void run() {
                 //status.setText(status.getText()+" New Thread");
+                paramName = choiceParameter.getSelectedItem().toString();
                 try {
-                    int l =0;
+                   // int l =0;
            while (serialPort.isOpened()) {
                // status.setText("Status " + serialPort.isOpened());
                         byte[] data = progressiveSleepRead(serialPort);
                         if (data != null){
+                                for(byte k : data)
+                                    byteList.add(k);
+                                while(byteList.size()>=6){
+                                   byte[] packet = new byte[6];
+                                   for(int k=0; k<6; k++)
+                                       packet[k] = byteList.pollFirst();
+                                   //System.out.println("data " + conv(packet));
+                                   choiceCOM.setText(conv(packet));
+                                   txtValue.setText(conv(packet));
+                                   try {
+                                    double val = Double.parseDouble(txtValue.getText());
+                                    parameterServer.updateParameter(mainConfigName, paramName, val);
+                                        } catch (ControllerException ex) {}
+                                }
                             //listener.onDataArrived(data);
                             //choiceCOM.setText(bytesToHex(data));
-                           choiceCOM.setText(conv(data));
+                           
                         }else{
-                            l++;
+                            //l++;
                        // status.setText("Empty Data" +l);
                         }  
                     }
@@ -100,7 +121,7 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
                 }
 
             }
-           }, "Reader_" + serialPort).start();
+           }, "Reader_k"); t.start();
         }
 
    public byte[] progressiveSleepRead(SerialPort serialPort) throws SerialPortException {
@@ -148,6 +169,16 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
     
     public void connect(String port){
         String portName = port;
+        if(serialPort != null && serialPort.isOpened()){
+            
+           try {
+                    serialPort.closePort();
+                    //status.setText("Innovate port - " + comnum.getSelectedItem().toString() + " Disconnect");
+                }
+                 catch (SerialPortException ex) {
+                        //System.out.println(ex);
+                    }
+                }  
         serialPort = new SerialPort(portName);
                 try {
                     serialPort.openPort();
@@ -280,17 +311,12 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
     }
 
     private void sendValue(){
-        String paramName = choiceParameter.getSelectedItem().toString();
+        paramName = choiceParameter.getSelectedItem().toString();
+        //String paramName = choiceParameter.getSelectedItem().toString();
         if(!paramName.equals("")){
             try {
                 double val = Double.parseDouble(txtValue.getText());
                 parameterServer.updateParameter(mainConfigName, paramName, val);
-                /*try {
-                    serialPort.writeString("$"+val + "$");
-                }
-                catch (SerialPortException ex) {
-                    System.out.println(ex);
-                }*/
             } catch (ControllerException ex) {
                 JOptionPane.showMessageDialog(txtValue, "Failed to update value for "+currentParameterName +"\nError:\n"+ex.getMessage());
                 parameterValueChanged(currentParameterName);

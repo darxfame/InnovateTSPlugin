@@ -100,8 +100,7 @@ public class InnovatePlugin extends JPanel implements ApplicationPlugin{
 						ca.getOutputChannelServer().subscribe(ecuControllerName, oc.getName(), label);
 						pReadouts.add(label);
 						}
-					}
-					
+					}		
             // initialize the UiDisplay
             // uiDisplay.initialize(controllerAccess);
 
@@ -125,7 +124,7 @@ public class InnovatePlugin extends JPanel implements ApplicationPlugin{
     }
 
     public String getAuthor() {
-        return "Artem Kochegizov";
+        return "Artem Kochegizov & AndreiK & Puff";
     }
 
     public JComponent getPluginPanel() {
@@ -138,7 +137,8 @@ public class InnovatePlugin extends JPanel implements ApplicationPlugin{
         // Make sure the widgets are cleaned up!!!!
         // uiDisplay.clearWidgetPanel();
         try{
-        ParameterSample.serialPort.closePort();
+        paramSample.serialPort.closePort();
+        paramSample = null;
         } catch (SerialPortException e) {
                     e.printStackTrace();
                 }
