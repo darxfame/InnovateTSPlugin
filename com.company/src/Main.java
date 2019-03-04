@@ -1,5 +1,3 @@
-package com.company;
-
 import jssc.SerialPort;
 import jssc.SerialPortList;
 import jssc.SerialPortEvent;
@@ -11,13 +9,14 @@ public class Main {
     static PortReader read;
 
     public static class PortReader {
-        private final int[] SLEEP_DURATIONS = {40};
+        private final int[] SLEEP_DURATIONS = {1,20,50,100};
 
         public String conv(byte[] in) {
 
             short afr = 0;
             short  lambda = 0;
             float ratio = 0;
+            if(in.length == 6){
             if ((in[0]==(byte)0xb2) && (in[1]==(byte)0x82)){  //определяем заголовок
                 if (((in[2] & 254)==66)) //определяем выполнение условия
                 {afr=in[3];
@@ -26,14 +25,14 @@ public class Main {
                     lambda |= ((in[4] & 63)<<7);
                     ratio = (float)(lambda+500)*(float)(afr)/(float)10000.0;
                     //System.out.println(ratio);
-                    return Float.toString(ratio);
-                }}else{
+                    return Float.toString(ratio) + " " + in.length;
+                }}  else{
         /*final StringBuilder builder = new StringBuilder();
             builder.append(String.format("%02x ", in[0]));
             builder.append(String.format("%02x", in[1]));
             return builder.toString();*/
                 return "";
-            }
+                        }}
             return Float.toString(ratio);
         }
 
@@ -48,6 +47,7 @@ public class Main {
                         while (serialPort.isOpened()) {
                             // status.setText("Status " + serialPort.isOpened());
                             byte[] data = progressiveSleepRead(serialPort);
+
                             if (data != null){
                                 //listener.onDataArrived(data);
                                 //choiceCOM.setText(bytesToHex(data));
@@ -73,6 +73,7 @@ public class Main {
                 byte[] data;
                 synchronized (serialPort) {
                     data = serialPort.readBytes();
+                    //System.out.println("Read");
                 }
                 if (data != null)
                     return data;
@@ -117,6 +118,7 @@ public class Main {
             //serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN | SerialPort.FLOWCONTROL_RTSCTS_OUT);
             //choiceCOM.setText("com");
             //status.setText(status.getText()+"Innovate port - " + serialPort.getPortName().toString());
+            System.out.println("Connect");
             read = new PortReader();
         }
         catch (SerialPortException ex) {
@@ -126,6 +128,6 @@ public class Main {
     }
 
     public static void main(String[] args) {
-	connect("COM2");
+	connect("COM1");
     }
 }
