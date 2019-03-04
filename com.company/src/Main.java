@@ -16,7 +16,7 @@ public class Main {
             short afr = 0;
             short  lambda = 0;
             float ratio = 0;
-            if(in.length == 6){
+            if(in.length == 6){      //ВНИМАНИЕ НУЖНО НАПИСАТЬ НОВЫЙ ВАРИАНТ РАЗБОРА ВХОДЯЩИХ ДАННЫХ
             if ((in[0]==(byte)0xb2) && (in[1]==(byte)0x82)){  //определяем заголовок
                 if (((in[2] & 254)==66)) //определяем выполнение условия
                 {afr=in[3];
