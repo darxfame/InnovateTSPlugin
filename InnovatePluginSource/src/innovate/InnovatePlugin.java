@@ -63,7 +63,7 @@ public class InnovatePlugin extends JPanel implements ApplicationPlugin{
     }
 
     public String getIdName() {
-        return "tsInnovateWBO";
+        return "tsInnovateAFR";
     }
 
     public int getPluginType() {

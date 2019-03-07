@@ -7,6 +7,7 @@ import com.efiAnalytics.plugin.ecu.ControllerParameterChangeListener;
 import com.efiAnalytics.plugin.ecu.servers.ControllerParameterServer;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.Dimension; 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -50,6 +51,7 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
     JLabel status;
     JLabel warn = null;
     JButton btnUpdate = new JButton("Update Parameter");
+    JPanel stpan = new JPanel();
     
    public class PortReader {
     private final int[] SLEEP_DURATIONS = {1,20,50,100};
@@ -72,7 +74,8 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
                                     lambda |= ((in[4] & 63)<<7);
                                     ratio = (float)(lambda+500)*(float)(afr)/(float)10000.0;
                                     //System.out.println(ratio);
-                                    ratio = (float)new BigDecimal(ratio).setScale(2, RoundingMode.HALF_UP).doubleValue();
+                                    ratio = (float)new BigDecimal(ratio).setScale(1, RoundingMode.HALF_UP).doubleValue();
+                                    //ratio = (float)Math.round(ratio * 100.0f) / 100.0f;
                                     return Float.toString(ratio);
                                     }}else{
         /*final StringBuilder builder = new StringBuilder();
@@ -168,6 +171,7 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
                     serialPort.closePort();
                     //status.setText("Port - " + comnum.getSelectedItem().toString() + " Disconnect");
                     choiceCOM.setText("#####");
+                    stpan.setBackground(new java.awt.Color(255, 0, 0));
                     btnDisConnect.setEnabled(false);
                 }
                  catch (SerialPortException ex) {
@@ -202,6 +206,7 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
                     //status.setText("Port - " + serialPort.getPortName().toString() + " Connect");
                     btnConnect.setEnabled(false);
                     btnDisConnect.setEnabled(true);
+                    stpan.setBackground(new java.awt.Color(0, 255, 0));
                     read = new PortReader();
                 }
                 catch (SerialPortException ex) {
@@ -230,6 +235,10 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
         warn.setFont(new java.awt.Font("Tahoma", 0, 15));
         warn.setForeground(new java.awt.Color(255, 0, 51));
         warn.setText("ВНИМАНИЕ! ПРИ ОБРЫВЕ КОННЕКТА С INNOVATE ЗАКРЫВАТЬ ФОРМУ ЧЕРЕЗ КНОПКУ CLOSE");
+        
+        stpan.setBackground(new java.awt.Color(255, 0, 0));
+        Dimension d1 = new Dimension(20, 30); 
+        stpan.setMinimumSize(d1);
         		
          pSouth.add(BorderLayout.WEST, choiceParameter);
          pSouth.add(BorderLayout.CENTER, btnUpdate);
@@ -240,6 +249,7 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
          pCenter.add(BorderLayout.CENTER, btnConnect);
          pCenter.add(BorderLayout.EAST, choiceCOM);
          pNorth.add(BorderLayout.WEST, warn);
+         pCenter.add(BorderLayout.EAST, stpan);
          //pNorth.add(BorderLayout.SOUTH, status);
 
                 
