@@ -59,45 +59,34 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
             
 
                 public Thread t;
-                
- 
+
         public String conv(byte[] in) {
                             short afr = 0;
                             short  lambda = 0;
                             float ratio = 0;
                             
-                            if ((in[0]==(byte)0xb2) && (in[1]==(byte)0x82)){  //определяем заголовок 
-                            if (((in[2] & 254)==66)) //определяем выполнение условия 
+                            if ((in[0]==(byte)0xb2) && (in[1]==(byte)0x82)){ 
+                            if (((in[2] & 254)==66))
                                     {afr=in[3];
-                                     afr |= ((in[2] & 1)<<7); //формируем значение aft для формулы, но надо бы проверить, правильно ли собрал 
+                                     afr |= ((in[2] & 1)<<7);
                                             lambda=in[5];	
                                     lambda |= ((in[4] & 63)<<7);
                                     ratio = (float)(lambda+500)*(float)(afr)/(float)10000.0;
-                                    //System.out.println(ratio);
                                     ratio = (float)new BigDecimal(ratio).setScale(1, RoundingMode.HALF_UP).doubleValue();
-                                    //ratio = (float)Math.round(ratio * 100.0f) / 100.0f;
                                     return Float.toString(ratio);
                                     }}else{
-        /*final StringBuilder builder = new StringBuilder();
-            builder.append(String.format("%02x ", in[0]));
-            builder.append(String.format("%02x", in[1]));
-            return builder.toString();*/
                     return "";
                             }
             return Float.toString(ratio);
        }
     
         public PortReader() {
-            //status.setText("Connect ");
            t = new Thread(new Runnable() {
             @Override
             public void run() {
-                //status.setText(status.getText()+" New Thread");
                 paramName = choiceParameter.getSelectedItem().toString();
                 try {
-                   // int l =0;
            while (serialPort.isOpened()) {
-               // status.setText("Status " + serialPort.isOpened());
                         byte[] data = progressiveSleepRead(serialPort);
                         if (data != null){
                                 for(byte k : data)
@@ -106,7 +95,6 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
                                    byte[] packet = new byte[6];
                                    for(int k=0; k<6; k++)
                                        packet[k] = byteList.pollFirst();
-                                   //System.out.println("data " + conv(packet));
                                    choiceCOM.setText(conv(packet));
                                    txtValue.setText(conv(packet));
                                    try {
@@ -114,17 +102,9 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
                                     parameterServer.updateParameter(mainConfigName, paramName, val);
                                         } catch (ControllerException ex) {}
                                 }
-                            //listener.onDataArrived(data);
-                            //choiceCOM.setText(bytesToHex(data));
-                           
-                        }else{
-                            //l++;
-                       // status.setText("Empty Data" +l);
-                        }  
+                        } 
                     }
-          // status.setText("Disconnect" +l);
            } catch (SerialPortException e) {
-               //status.setText(status.getText()+" Except");
                     e.printStackTrace();
                 }
 
@@ -142,11 +122,9 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
                 return data;
             try {
                 Thread.sleep(sleepDuration);
-                //status.setText("Sleep " + sleepDuration);
                 } 
             catch (InterruptedException e) 
                 {
-                    //status.setText(e.toString());
                     throw new IllegalStateException(e);
                 }
         }
@@ -169,13 +147,12 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
         btnConnect.setEnabled(true);
     try {
                     serialPort.closePort();
-                    //status.setText("Port - " + comnum.getSelectedItem().toString() + " Disconnect");
                     choiceCOM.setText("#####");
                     stpan.setBackground(new java.awt.Color(255, 0, 0));
                     btnDisConnect.setEnabled(false);
                 }
                  catch (SerialPortException ex) {
-                        //System.out.println(ex);
+                        System.out.println(ex);
                     }
                 }  
     
@@ -185,10 +162,9 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
             
            try {
                     serialPort.closePort();
-                    //status.setText("Innovate port - " + comnum.getSelectedItem().toString() + " Disconnect");
                 }
                  catch (SerialPortException ex) {
-                        //System.out.println(ex);
+                        System.out.println(ex);
                     }
                 }  
         serialPort = new SerialPort(portName);
@@ -201,18 +177,14 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
                     serialPort.setRTS(false);
                     serialPort.setDTR(false);
                     serialPort.setFlowControlMode(0);
-                    //serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN | SerialPort.FLOWCONTROL_RTSCTS_OUT);
-                    //choiceCOM.setText("com");
-                    //status.setText("Port - " + serialPort.getPortName().toString() + " Connect");
                     btnConnect.setEnabled(false);
                     btnDisConnect.setEnabled(true);
                     stpan.setBackground(new java.awt.Color(0, 255, 0));
                     read = new PortReader();
                 }
                 catch (SerialPortException ex) {
-                    //status.setText("Port - " + ex.getLocalizedMessage().toString());
                     btnConnect.setEnabled(true);
-                    //System.out.println(ex);
+                    System.out.println(ex);
                 }  
     }
    
@@ -229,9 +201,8 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
         add(BorderLayout.NORTH, pNorth);
         
         choiceCOM = new JLabel("#####", JLabel.LEFT);
-        //status = new JLabel("Not Connected", JLabel.RIGHT);
         btnDisConnect.setEnabled(false);
-        warn = new JLabel("", JLabel.LEFT);
+        warn = new JLabel("", JLabel.CENTER);
         warn.setFont(new java.awt.Font("Tahoma", 0, 15));
         warn.setForeground(new java.awt.Color(255, 0, 51));
         warn.setText("ВНИМАНИЕ! ПРИ ОБРЫВЕ КОННЕКТА С INNOVATE ЗАКРЫВАТЬ ФОРМУ ЧЕРЕЗ КНОПКУ CLOSE");
@@ -248,9 +219,8 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
          pCenter.add(BorderLayout.SOUTH, btnDisConnect);
          pCenter.add(BorderLayout.CENTER, btnConnect);
          pCenter.add(BorderLayout.EAST, choiceCOM);
-         pNorth.add(BorderLayout.WEST, warn);
+         pNorth.add(BorderLayout.NORTH, warn);
          pCenter.add(BorderLayout.EAST, stpan);
-         //pNorth.add(BorderLayout.SOUTH, status);
 
                 
 		
@@ -295,12 +265,10 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
         SetPortNames();
         
         String[] allParameters = parameterServer.getParameterNames(mainConfigName);
-         //choiceParameter.addItem(NO_PARAMETER);// an empty one at the top
         for(int i=0; i<allParameters.length; i++){
             try {
                 ControllerParameter param = parameterServer.getControllerParameter(mainConfigName, allParameters[i]);
                 if(param.getParamClass().equals(ControllerParameter.PARAM_CLASS_SCALAR)){
-                    // only adding Scalar, array need different UI
 					if(allParameters[i].indexOf("innovate") > -1 ){
                     choiceParameter.addItem(allParameters[i]);
 					}
@@ -317,9 +285,7 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
     }
 
     private void changeParameter(){
-        // don't forget the clean up...
         unsubscribe();
-        // now onto the new parameter.
         currentParameterName = choiceParameter.getSelectedItem().toString();
         if(currentParameterName.equals(NO_PARAMETER)){
             txtValue.setText("");
@@ -338,7 +304,6 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
 
     private void sendValue(){
         paramName = choiceParameter.getSelectedItem().toString();
-        //String paramName = choiceParameter.getSelectedItem().toString();
         if(!paramName.equals("")){
             try {
                 double val = Double.parseDouble(txtValue.getText());
@@ -348,7 +313,6 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
                 parameterValueChanged(currentParameterName);
             } catch(NumberFormatException nfe){
                 JOptionPane.showMessageDialog(txtValue, "Invalid Value for "+currentParameterName );
-                // reset it back to current value
                 parameterValueChanged(currentParameterName);
             }
         }
@@ -356,8 +320,6 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
     }
 
     private void unsubscribe(){
-        // You would likely want to maintain specific listeners, but for
-        // simplisity sake in an example
         parameterServer.unsubscribe(this);
     }
 
