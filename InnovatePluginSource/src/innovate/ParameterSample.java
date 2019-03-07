@@ -327,7 +327,6 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
         try {
             ControllerParameter param = parameterServer.getControllerParameter(mainConfigName, parameter);
 			String text = Double.toString(param.getScalarValue());
-			text = text.substring(0, 5);
             txtValue.setText(text);
         } catch (ControllerException ex) {
             Logger.getLogger(ParameterSample.class.getName()).log(Level.SEVERE, null, ex);
