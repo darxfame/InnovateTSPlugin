@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="InnovatePluginSource">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dist/InnovatePluginSource.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
