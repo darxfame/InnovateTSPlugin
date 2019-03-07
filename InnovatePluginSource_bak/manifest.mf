@@ -1,4 +1,0 @@
-Manifest-Version: 1.0
-Main-Class: innovate.InnovatePlugin
-Class-Path: lib/TunerStudioPluginAPI-javadoc.jar lib/TunerStudioPluginAPI.jar
-ApplicationPlugin: innovate.InnovatePlugin
