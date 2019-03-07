@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import jssc.SerialPort;
@@ -35,9 +36,10 @@ public class InnovatePlugin extends JPanel implements ApplicationPlugin{
 
     public InnovatePlugin(){
         buildUi();
+        
     }
 
-    private void buildUi(){
+    private void buildUi() {
         setLayout(new BorderLayout());
 
         pReadouts = new JPanel();
@@ -140,8 +142,8 @@ public class InnovatePlugin extends JPanel implements ApplicationPlugin{
         paramSample.serialPort.closePort();
         paramSample = null;
         } catch (SerialPortException e) {
-                    e.printStackTrace();
-                }
+                    //e.printStackTrace();
+        }
         
     }
     /** This main is likely not used, but TunerStudio will check the manifest

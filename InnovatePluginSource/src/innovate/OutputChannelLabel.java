@@ -25,9 +25,10 @@ public class OutputChannelLabel extends JPanel implements OutputChannelClient{
         }
         JLabel lblTitle = new JLabel(title, JLabel.RIGHT);
         add(BorderLayout.WEST, lblTitle);
-        lblValue = new JLabel("#####", JLabel.LEFT);
-        lblValue.setMinimumSize(new Dimension(45, 18));
-        lblValue.setPreferredSize(new Dimension(45, 18));
+        lblValue = new JLabel("#####", JLabel.CENTER);
+        lblValue.setFont(new java.awt.Font("Tahoma", 0, 25));
+        lblValue.setMinimumSize(new Dimension(45,25));
+        lblValue.setPreferredSize(new Dimension(45, 25));
         add(BorderLayout.CENTER, lblValue);
     }
 

@@ -26,6 +26,8 @@ import jssc.SerialPortList;
 import jssc.SerialPortEvent;
 import jssc.SerialPortEventListener;
 import jssc.SerialPortException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class ParameterSample extends JPanel implements ControllerParameterChangeListener{
 
@@ -45,7 +47,8 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
     JButton btnConnect = new JButton("Connect");
     JButton btnDisConnect = new JButton("Disconnect");
     JLabel choiceCOM = null;
-    JLabel status = null;
+    JLabel status;
+    JLabel warn = null;
     JButton btnUpdate = new JButton("Update Parameter");
     
    public class PortReader {
@@ -54,12 +57,13 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
             
 
                 public Thread t;
-    
+                
+ 
         public String conv(byte[] in) {
-
                             short afr = 0;
                             short  lambda = 0;
                             float ratio = 0;
+                            
                             if ((in[0]==(byte)0xb2) && (in[1]==(byte)0x82)){  //определяем заголовок 
                             if (((in[2] & 254)==66)) //определяем выполнение условия 
                                     {afr=in[3];
@@ -68,6 +72,7 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
                                     lambda |= ((in[4] & 63)<<7);
                                     ratio = (float)(lambda+500)*(float)(afr)/(float)10000.0;
                                     //System.out.println(ratio);
+                                    ratio = (float)new BigDecimal(ratio).setScale(2, RoundingMode.HALF_UP).doubleValue();
                                     return Float.toString(ratio);
                                     }}else{
         /*final StringBuilder builder = new StringBuilder();
@@ -134,11 +139,11 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
                 return data;
             try {
                 Thread.sleep(sleepDuration);
-                status.setText("Sleep " + sleepDuration);
+                //status.setText("Sleep " + sleepDuration);
                 } 
             catch (InterruptedException e) 
                 {
-                    status.setText(e.toString());
+                    //status.setText(e.toString());
                     throw new IllegalStateException(e);
                 }
         }
@@ -158,9 +163,12 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
 }     
 
     public void disconnect(){ 
+        btnConnect.setEnabled(true);
     try {
                     serialPort.closePort();
-                    status.setText("Innovate port - " + comnum.getSelectedItem().toString() + " Disconnect");
+                    //status.setText("Port - " + comnum.getSelectedItem().toString() + " Disconnect");
+                    choiceCOM.setText("#####");
+                    btnDisConnect.setEnabled(false);
                 }
                  catch (SerialPortException ex) {
                         //System.out.println(ex);
@@ -191,11 +199,14 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
                     serialPort.setFlowControlMode(0);
                     //serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN | SerialPort.FLOWCONTROL_RTSCTS_OUT);
                     //choiceCOM.setText("com");
-                    status.setText(status.getText()+"Innovate port - " + serialPort.getPortName().toString());
+                    //status.setText("Port - " + serialPort.getPortName().toString() + " Connect");
+                    btnConnect.setEnabled(false);
+                    btnDisConnect.setEnabled(true);
                     read = new PortReader();
                 }
                 catch (SerialPortException ex) {
-                    status.setText("Innovate port - " + ex.getLocalizedMessage().toString());
+                    //status.setText("Port - " + ex.getLocalizedMessage().toString());
+                    btnConnect.setEnabled(true);
                     //System.out.println(ex);
                 }  
     }
@@ -213,18 +224,23 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
         add(BorderLayout.NORTH, pNorth);
         
         choiceCOM = new JLabel("#####", JLabel.LEFT);
-        status = new JLabel("start ", JLabel.LEFT);
-
-		
+        //status = new JLabel("Not Connected", JLabel.RIGHT);
+        btnDisConnect.setEnabled(false);
+        warn = new JLabel("", JLabel.LEFT);
+        warn.setFont(new java.awt.Font("Tahoma", 0, 15));
+        warn.setForeground(new java.awt.Color(255, 0, 51));
+        warn.setText("ВНИМАНИЕ! ПРИ ОБРЫВЕ КОННЕКТА С INNOVATE ЗАКРЫВАТЬ ФОРМУ ЧЕРЕЗ КНОПКУ CLOSE");
+        		
          pSouth.add(BorderLayout.WEST, choiceParameter);
          pSouth.add(BorderLayout.CENTER, btnUpdate);
          pSouth.add(BorderLayout.EAST, txtValue);
 
-         pNorth.add(BorderLayout.WEST, comnum);
-         pNorth.add(BorderLayout.SOUTH, choiceCOM);
-         pNorth.add(BorderLayout.EAST, btnDisConnect);
-         pNorth.add(BorderLayout.CENTER, btnConnect);
-         pCenter.add(BorderLayout.CENTER, status);
+         pCenter.add(BorderLayout.WEST, comnum);
+         pCenter.add(BorderLayout.SOUTH, btnDisConnect);
+         pCenter.add(BorderLayout.CENTER, btnConnect);
+         pCenter.add(BorderLayout.EAST, choiceCOM);
+         pNorth.add(BorderLayout.WEST, warn);
+         //pNorth.add(BorderLayout.SOUTH, status);
 
                 
 		
