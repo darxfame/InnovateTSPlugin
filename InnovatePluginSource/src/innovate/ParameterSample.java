@@ -29,6 +29,7 @@ import jssc.SerialPortEventListener;
 import jssc.SerialPortException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import javax.swing.JCheckBox;
 
 public class ParameterSample extends JPanel implements ControllerParameterChangeListener{
 
@@ -47,11 +48,18 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
     JComboBox comnum = new JComboBox();
     JButton btnConnect = new JButton("Connect");
     JButton btnDisConnect = new JButton("Disconnect");
+    JCheckBox jCheckBox1 = new JCheckBox("Скрыть ручной ввод значения?");
     JLabel choiceCOM = null;
     JLabel status;
     JLabel warn = null;
     JButton btnUpdate = new JButton("Update Parameter");
     JPanel stpan = new JPanel();
+    
+            
+       JPanel pSouth = new JPanel();
+       JPanel pNorth = new JPanel();
+       JPanel pNorth1 = new JPanel();
+       JPanel pCenter = new JPanel();
     
    public class PortReader {
     private final int[] SLEEP_DURATIONS = {1,20,50,100};
@@ -188,18 +196,21 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
                 }  
     }
    
+  
+
 
     public ParameterSample(){
         setBorder(BorderFactory.createTitledBorder("Select innovate Connect & PCVariable"));
         setLayout(new BorderLayout(5,5));
-        
-        JPanel pSouth = new JPanel();
-        JPanel pNorth = new JPanel();
-        JPanel pCenter = new JPanel();
+
         add(BorderLayout.SOUTH, pSouth);
         add(BorderLayout.CENTER, pCenter);
         add(BorderLayout.NORTH, pNorth);
+        add(BorderLayout.EAST, pNorth1);
         
+
+        jCheckBox1.setSelected(true);
+        pSouth.setVisible(false);
         choiceCOM = new JLabel("#####", JLabel.LEFT);
         btnDisConnect.setEnabled(false);
         warn = new JLabel("", JLabel.CENTER);
@@ -211,24 +222,38 @@ public class ParameterSample extends JPanel implements ControllerParameterChange
         Dimension d1 = new Dimension(20, 30); 
         stpan.setMinimumSize(d1);
         		
-         pSouth.add(BorderLayout.WEST, choiceParameter);
+         //pSouth.add(BorderLayout.WEST, choiceParameter);
          pSouth.add(BorderLayout.CENTER, btnUpdate);
          pSouth.add(BorderLayout.EAST, txtValue);
 
          pCenter.add(BorderLayout.WEST, comnum);
          pCenter.add(BorderLayout.SOUTH, btnDisConnect);
          pCenter.add(BorderLayout.CENTER, btnConnect);
-         pCenter.add(BorderLayout.EAST, choiceCOM);
-         pNorth.add(BorderLayout.NORTH, warn);
+         //pCenter.add(BorderLayout.EAST, choiceCOM);
          pCenter.add(BorderLayout.EAST, stpan);
+         //pCenter.add(BorderLayout.EAST, jCheckBox1);
+         pCenter.setLayout(new GridLayout(0,1,2,2));
+         pNorth.add(BorderLayout.NORTH, warn);
+         pCenter.add(BorderLayout.SOUTH, jCheckBox1);
 
-                
+         jCheckBox1.addActionListener(new ActionListener(){
+         public void actionPerformed(ActionEvent e) {                                           
+        // TODO add your handling code here:
+        if(jCheckBox1.isSelected()){
+            pSouth.setVisible(false);
+        }else
+        {
+            pSouth.setVisible(true);
+        }
+            }  
+        });
 		
         btnUpdate.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 sendValue();
             }
         });
+        
 
         btnConnect.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {

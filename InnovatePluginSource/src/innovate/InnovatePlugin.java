@@ -26,6 +26,7 @@ public class InnovatePlugin extends JPanel implements ApplicationPlugin{
     JTextField txtReqFuel = new JTextField();
     JPanel pReadouts = null;
     JPanel pSettings = null;
+
     ExpressionEvalSample evalSample = null;
     ParameterSample paramSample = null;
     
@@ -50,12 +51,10 @@ public class InnovatePlugin extends JPanel implements ApplicationPlugin{
         JPanel pSouth = new JPanel();
         pSouth.setLayout(new GridLayout(0,1,2,2));
         paramSample = new ParameterSample();
-        pSouth.add(paramSample);
+        pSouth.add(paramSample); //добавить radiobutton, скрыть панель
         add(BorderLayout.SOUTH, pSouth);
-		
-
     }
-
+    
     public String getIdName() {
         return "tsInnovateAFR";
     }
@@ -65,11 +64,11 @@ public class InnovatePlugin extends JPanel implements ApplicationPlugin{
     }
 
     public String getDisplayName() {
-        return "Innovate WBO-COM(connect)";
+        return "Innovate LC-1";
     }
 
     public String getDescription() {
-				return "wbo";
+				return "Plugin for connecting to innovate wbo with lc-1 protocol";
     }
 
 
@@ -148,7 +147,7 @@ public class InnovatePlugin extends JPanel implements ApplicationPlugin{
     }
 
     public String getVersion() {
-        return "0.05 Alpha";
+        return "0.06 Alpha";
     }
 
     public double getRequiredPluginSpec() {
